@@ -1,4 +1,6 @@
 class Despesa:
+    """Representa uma despesa financeira registrada pelo usuário."""
+    
     def __init__(self, id, valor, data, categoria, descricao, forma_pagamento):
         self.id = id
         self.valor = valor

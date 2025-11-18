@@ -1,4 +1,6 @@
 class Receita:
+    """Representa uma receita financeira."""
+    
     def __init__(self, id, valor, data, categoria, descricao, forma_pagamento):
         self.id = id
         self.valor = valor

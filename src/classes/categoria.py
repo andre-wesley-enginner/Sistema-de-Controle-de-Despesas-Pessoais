@@ -1,4 +1,6 @@
 class Categoria:
+    """Representa uma categoria de lançamento financeiro."""
+
     def __init__(self, nome, tipo, limite_mensal, descricao):
         self.nome = nome
         self.tipo = tipo

@@ -1,4 +1,6 @@
 class OrcamentoMensal:
+    """Gerencia os lançamentos de um mês específico."""
+    
     def __init__(self, ano, mes, lancamento, limite_total):
         self.ano = ano
         self.mes = mes

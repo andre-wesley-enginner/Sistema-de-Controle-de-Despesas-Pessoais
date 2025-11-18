@@ -1,4 +1,6 @@
 class Alerta:
+    """Representa um alerta gerado pelo sistema financeiro."""
+    
     def __init__(self, mensagem, tipo, data):
         self.mensagem = mensagem
         self.tipo = tipo

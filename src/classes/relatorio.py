@@ -1,4 +1,6 @@
 class Relatorio:
+    """Gera relatórios financeiros baseados no orçamento."""
+    
     def __init__(self, orcamento_atual, historico_meses):
         self.orcamento_atual = orcamento_atual
         self.historico_meses = historico_meses
