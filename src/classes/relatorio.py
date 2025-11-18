@@ -2,19 +2,25 @@ class Relatorio:
     def __init__(self, orcamento_atual, historico_meses):
         self.orcamento_atual = orcamento_atual
         self.historico_meses = historico_meses
+        """Inicializa o relatório com o orçamento atual e o histórico."""
         pass
 
-    def total_por_categoria():
+    def calcular_total_por_categoria(self):
+        """Calcula o valor total gasto por categoria no mês atual."""
         pass
 
-    def gasto_por_forma_pagamento():
+    def totais_por_pagamento(self):
+        """Agrupa os lançamentos do mês atual por forma de pagamento."""
         pass
 
-    def percentual_categoria():
+    def percentual_por_categoria(self):
+        """Calcula qual porcentagem do total de despesas cada categoria representa."""
         pass
 
-    def comparativo_3_meses():
+    def comparar_ultimos_meses(self):
+        """Compara o total de despesas dos últimos meses registrados."""
         pass
 
-    def mes_mais_economico():
+    def encontrar_mes_mais_economico(self):
+        """Encontra o mês com menor total de despesas no histórico."""
         pass
