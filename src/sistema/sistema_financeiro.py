@@ -14,44 +14,43 @@ class SistemaFinanceiro:
 
     def carregar_dados(self):
         """Carrega categorias, lançamentos, orçamentos e configurações dos arquivos JSON."""
-        pass
+        
 
     def salvar_dados(self):
         """ Salva todos os dados manipulados pelo sistema nos arquivos JSON."""
-        pass
+        
 
     def adicionar_categoria(self, categoria):
         """Adiciona uma nova categoria ao sistema."""
-        pass
+        
 
     def remover_categoria(self, nome):
         """Remove uma categoria pelo nome, caso ela não tenha lançamentos associados."""
-        pass
+        
 
     def adicionar_lancamento(self, lancamento):
         """Adiciona um lançamento (receita ou despesa) ao sistema."""
-        pass
+        
 
     def listar_lancamentos(self, mes = None, ano = None):
         """Lista lançamentos filtrados por mês e ano."""
-        pass
+        
 
     def calcular_saldo_mensal(self, mes, ano):
         """Calcula o saldo mensal (receitas - despesas)."""
-        pass
+        
 
     def gerar_relatorio_categorias(self, mes, ano):
         """Gera relatório com total de despesas agrupadas por categoria."""
-        pass
+        
 
     def gerar_relatorio_pagamentos(self, mes, ano):
         """Gera relatório agrupando despesas pela forma de pagamento."""
-        pass
+        
 
     def gerar_comparativo_mensal(self, quantidade_meses):
         """Gera um comparativo entre receitas e despesas dos últimos meses."""
-        pass
+        
 
     def verificar_alertas(self, lancamento):
         """Verifica se um lançamento gera alertas:"""
-        pass

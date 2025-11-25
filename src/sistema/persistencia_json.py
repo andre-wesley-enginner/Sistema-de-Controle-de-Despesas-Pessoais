@@ -11,12 +11,11 @@ class PersistenciaJSON:
 
     def carregar(self, nome_arquivo):
         """Carrega dados de um arquivo JSON. """
-        pass
+        
 
     def salvar(self, nome_arquivo, dados):
         """ Salva dados em um arquivo JSON. """
-        pass
+        
 
     def arquivo_existe(self, nome_arquivo):
         """Verifica se um arquivo JSON existe na pasta de dados."""
-        pass
