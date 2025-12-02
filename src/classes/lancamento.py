@@ -1,9 +1,16 @@
 from categoria import Categoria
 from datetime import date, datetime
 
+
 class Lancamento:
-    
-    def __init__(self, valor, data, categoria, descricao):
+    proximo_id = 1
+
+    def __init__(self, valor, data, categoria, descricao, id=None):
+        if id is not None:
+            self.id = id
+        else:
+            self.id = Lancamento.proximo_id
+            Lancamento.proximo_id += 1
         self.valor = valor
         self.data = data
         self.categoria = categoria
@@ -71,6 +78,15 @@ class Lancamento:
         self.data == outro.data and
         self.categoria == outro.categoria and
         self.descricao == outro.descricao)
+    
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "valor": self.valor,
+            "data": self.data.isoformat(),
+            "descricao": self.descricao,
+            "categoria": self.categoria.to_dict()
+        }
                                         
     def criar_lancamento(self):
         pass

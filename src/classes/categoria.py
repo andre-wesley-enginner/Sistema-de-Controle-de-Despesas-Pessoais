@@ -38,7 +38,9 @@ class Categoria:
     
     @limite.setter
     def limite(self, valor):
-        if valor < 0:
+        if self.tipo.lower() == "receita" and valor != 0:
+            raise ValueError("Receita não pode ter limite")
+        elif valor < 0 and self.tipo.lower() == "despesa":
             raise ValueError("O valor não pode ser negativo")
         else:
             self._limite = valor
@@ -61,7 +63,14 @@ class Categoria:
         if not isinstance(outro, Categoria):
            return NotImplemented
         return self.nome == outro.nome
-            
+    
+    def to_dict(self):
+        return {
+            "nome": self.nome,
+            "tipo": self.tipo,
+            "limite": self.limite,
+            "descricao": self.descricao
+        }
     def salvar_categoria(self):
         pass
 
