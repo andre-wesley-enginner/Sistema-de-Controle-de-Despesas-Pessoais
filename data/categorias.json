@@ -1,0 +1,9 @@
+[
+    {
+        "nome": "Aluguel",
+        "tipo": "despesa",
+        "limite": 1000,
+        "descricao": "Moradia",
+        "id": 1
+    }
+]

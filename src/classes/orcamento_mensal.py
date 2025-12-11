@@ -5,10 +5,10 @@ from datetime import date, datetime
 
 class OrcamentoMensal:
     
-    def __init__(self, ano, mes, lista_lancamentos, limite_total):
+    def __init__(self, ano, mes, lista_lancamentos=None, limite_total=0):
         self.ano = ano
         self.mes = mes
-        self.lista_lancamentos = [] 
+        self.lista_lancamentos = lista_lancamentos or []
         self.limite_total = limite_total
     
     @property
