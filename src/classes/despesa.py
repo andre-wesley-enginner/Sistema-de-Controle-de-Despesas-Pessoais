@@ -86,6 +86,45 @@ class Despesa(Lancamento):
 
         return cls.lista_despesas
 
+    @classmethod
+    def criar_despesa(cls):
+        cls.carregar_despesas()
+        Categoria.carregar_categorias()
+
+        try:
+            valor = float(input("Valor da despesa: "))
+            if valor <= 0: raise ValueError("O valor deve ser positivo.")
+            
+            data_str = input("Data (AAAA-MM-DD): ")
+            dt = datetime.date.fromisoformat(data_str)
+            
+            categorias_despesa = [c for c in Categoria.lista_categoria if c.tipo == "despesa"]
+            if not categorias_despesa:
+                print("Erro: Crie uma categoria de despesa primeiro.")
+                return
+
+            for c in categorias_despesa: print(f"ID: {c.id} | Nome: {c.nome}")
+            id_cat = int(input("ID da categoria: "))
+            cat_escolhida = next((c for c in categorias_despesa if c.id == id_cat), None)
+
+            if not cat_escolhida:
+                print("Categoria inválida.")
+                return
+
+            forma = input("Forma de pagamento (dinheiro/debito/credito/pix): ")
+            desc = input("Descrição: ")
+
+
+            nova = cls(valor, dt, cat_escolhida, desc, forma)
+            cls.salvar_despesas()
+            
+            from .orcamento_mensal import OrcamentoMensal
+            OrcamentoMensal.gerar_orcamento(dt.month, dt.year)
+            
+            print("Despesa salva! Orçamento atualizado e alertas verificados.")
+
+        except ValueError as e:
+            print(f"Erro: {e}")
 
     @classmethod
     def editar_despesas(cls):

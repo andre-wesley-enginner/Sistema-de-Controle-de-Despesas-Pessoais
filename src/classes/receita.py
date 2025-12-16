@@ -88,6 +88,47 @@ class Receita(Lancamento):
         return cls.lista_receitas
     
     @classmethod
+    def criar_receita(cls):
+        # 1. Carrega os dados atuais do JSON para a memória primeiro
+        cls.carregar_receitas()
+        Categoria.carregar_categorias()
+
+        try:
+            valor = float(input("Valor da receita: "))
+            data_str = input("Data (AAAA-MM-DD): ")
+            dt = datetime.date.fromisoformat(data_str)
+            
+            # Filtrar apenas categorias de despesa
+            categorias_receitas = [c for c in Categoria.lista_categoria if c.tipo == "receita"]
+            if not categorias_receitas:
+                print("Erro: Não existem categorias de receita cadastradas.")
+                return
+
+            print("\nCategorias de Receita:")
+            for c in categorias_receitas:
+                print(f"ID: {c.id} | Nome: {c.nome}")
+            
+            id_cat = int(input("Digite o ID da categoria: "))
+            cat_escolhida = next((c for c in categorias_receitas if c.id == id_cat), None)
+
+            if not cat_escolhida:
+                print("ID de categoria inválido!")
+                return
+
+            desc = input("Descrição: ")
+            forma = input("Forma de recebimento (dinheiro/debito/credito/pix): ")
+
+            # 2. Instancia o objeto (o __init__ o adiciona na lista_despesas)
+            cls(valor, dt, cat_escolhida, desc, forma)
+
+            # 3. Salva no JSON
+            cls.salvar_receitas()
+            print("Receita lançada e salva com sucesso!")
+
+        except ValueError as e:
+            print(f"Erro nos dados digitados: {e}")
+
+    @classmethod
     def editar_receitas(cls):
         Categoria.carregar_categorias()
         cls.carregar_receitas()

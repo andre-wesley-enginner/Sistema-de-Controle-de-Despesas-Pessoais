@@ -1,31 +1,18 @@
-import unittest
-import json
-from datetime import date
-from src.classes.despesa import Despesa, CAMINHO_DESPESA
+import pytest
+import datetime
 from src.classes.categoria import Categoria
+from src.classes.despesa import Despesa
 
-class TestDespesa(unittest.TestCase):
+def setup_function():
+    Categoria.lista_categoria.clear()
+    Despesa.lista_despesas.clear()
 
-    def setUp(self):
-        Despesa.lista_despesas.clear()
-        Categoria.lista_categoria.clear()
+def test_despesa_forma_pagamento():
+    cat = Categoria("Aluguel", "despesa", 1000, "Casa")
+    desp = Despesa(800, datetime.date.today(), cat, "Aluguel", "pix")
+    assert desp.forma_pagamento == "pix"
 
-        with open(CAMINHO_DESPESA, "w") as f:
-            json.dump([], f)
-
-    def test_criacao_despesa(self):
-        cat = Categoria("Mercado", "despesa", 800, "Alimentos")
-        d = Despesa(120, date(2024, 3, 12), cat, "Compras", "debito")
-
-        self.assertEqual(d.forma_pagamento, "debito")
-        self.assertEqual(d.valor, 120)
-
-    def test_salvar_e_carregar(self):
-        cat = Categoria("Transporte", "despesa", 300, "Uber")
-        Despesa(40, date(2024, 3, 15), cat, "Corrida", "credito")
-        Despesa.salvar_despesas()
-
-        Despesa.lista_despesas.clear()
-        Despesa.carregar_despesas()
-
-        self.assertEqual(len(Despesa.lista_despesas), 1)
+def test_forma_pagamento_invalida():
+    cat = Categoria("Teste", "despesa", 100, "desc")
+    with pytest.raises(ValueError):
+        Despesa(50, datetime.date.today(), cat, "teste", "cheque")

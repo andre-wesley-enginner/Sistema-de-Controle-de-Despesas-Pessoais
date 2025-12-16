@@ -134,6 +134,47 @@ class Categoria:
         return maior_id + 1 
     
     @classmethod
+    def criar_categoria(cls):
+        cls.carregar_categorias()
+        nome = str(input("Digite o nome da Categoria: ")).strip()
+        tipo = str(input("Digite o tipo da Categoria (receita/despesa): ")).lower()
+        
+        if any(c.nome.lower() == nome.lower() and c.tipo == tipo for c in cls.lista_categoria):
+            print(f"Erro: Já existe uma categoria de {tipo} com o nome '{nome}'.")
+            return
+
+        limite = None
+        if tipo == "despesa": 
+            limite = float(input("Digite o limite mensal da categoria: "))
+            
+        descricao = str(input("Digite a descrição: "))
+        cls(nome, tipo, limite, descricao)
+        cls.salvar_categorias()
+        print(f"Categoria '{nome}' salva com sucesso!")
+
+    @classmethod
+    def excluir_categoria(cls):
+        cls.carregar_categorias()
+        if not cls.lista_categoria:
+            print("Nenhuma categoria para excluir.")
+            return
+
+        for c in cls.lista_categoria: print(f"ID: {c.id} | {c.nome} ({c.tipo})")
+        
+        try:
+            id_exc = int(input("\nID da categoria para excluir: "))
+            cat = next((c for c in cls.lista_categoria if c.id == id_exc), None)
+            
+            if cat:
+                cls.lista_categoria.remove(cat)
+                cls.salvar_categorias()
+                print("Categoria excluída com sucesso!")
+            else:
+                print("ID não encontrado.")
+        except ValueError:
+            print("ID inválido.")
+
+    @classmethod
     def editar_categorias(cls):
 
         cls.carregar_categorias()

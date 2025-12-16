@@ -1,9 +1,23 @@
 [
     {
-        "nome": "Aluguel",
+        "nome": "Teste",
         "tipo": "despesa",
-        "limite": 1000,
-        "descricao": "Moradia",
+        "limite": 1000.0,
+        "descricao": "oi",
         "id": 1
+    },
+    {
+        "nome": "teste2",
+        "tipo": "despesa",
+        "limite": 100000.0,
+        "descricao": "oi2",
+        "id": 2
+    },
+    {
+        "nome": "Teste3",
+        "tipo": "receita",
+        "limite": null,
+        "descricao": "oi2",
+        "id": 3
     }
 ]

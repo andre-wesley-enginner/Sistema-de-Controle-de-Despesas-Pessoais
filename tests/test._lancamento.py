@@ -1,31 +1,19 @@
-import unittest
-import json
-from datetime import date
-from src.classes.lancamento import Lancamento, CAMINHO_LANCAMENTO
+import pytest
+import datetime
 from src.classes.categoria import Categoria
+from src.classes.lancamento import Lancamento
 
-class TestLancamento(unittest.TestCase):
+def setup_function():
+    Categoria.lista_categoria.clear()
+    Lancamento.lista_lancamento.clear()
 
-    def setUp(self):
-        Lancamento.lista_lancamento.clear()
-        Categoria.lista_categoria.clear()
+def test_criar_lancamento():
+    cat = Categoria("Transporte", "despesa", 200, "Ônibus")
+    lanc = Lancamento(50, datetime.date(2024, 5, 10), cat, "Passagem")
+    assert lanc.valor == 50
+    assert lanc.categoria == cat
 
-        with open(CAMINHO_LANCAMENTO, "w") as f:
-            json.dump([], f)
-
-    def test_criacao_lancamento(self):
-        cat = Categoria("Alimentação", "despesa", 300, "Comidas")
-        l = Lancamento(50, date(2024, 3, 10), cat, "Lanche")
-
-        self.assertEqual(l.valor, 50)
-        self.assertEqual(l.categoria.nome, "Alimentação")
-
-    def test_salvar_e_carregar(self):
-        cat = Categoria("Alimentação", "despesa", 300, "Comidas")
-        Lancamento(60, date(2024, 3, 11), cat, "Almoço")
-        Lancamento.salvar_lancamentos()
-
-        Lancamento.lista_lancamento.clear()
-        Lancamento.carregar_lancamentos()
-
-        self.assertEqual(len(Lancamento.lista_lancamento), 1)
+def test_valor_invalido():
+    cat = Categoria("Teste", "despesa", 100, "desc")
+    with pytest.raises(ValueError):
+        Lancamento(-10, datetime.date.today(), cat, "erro")

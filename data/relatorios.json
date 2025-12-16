@@ -1,0 +1,13 @@
+[
+    {
+        "id": 1,
+        "mes": 12,
+        "ano": 2007,
+        "total_receitas": 1000.0,
+        "total_despesas": 10000.0,
+        "saldo": -9000.0,
+        "total_por_categoria": {
+            "Teste": 10000.0
+        }
+    }
+]

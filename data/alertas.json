@@ -1,0 +1,14 @@
+[
+    {
+        "mensagem": "Limite da categoria 'Teste' ultrapassado em 12/2007",
+        "tipo": "limite",
+        "id": 1,
+        "data": "2025-12-16T13:19:38.205177"
+    },
+    {
+        "mensagem": "Saldo negativo no orçamento de 12/2007",
+        "tipo": "saldo",
+        "id": 1,
+        "data": "2025-12-16T13:19:38.205358"
+    }
+]
