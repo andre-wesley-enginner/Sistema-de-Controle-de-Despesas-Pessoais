@@ -6,6 +6,13 @@ class Categoria:
     lista_categoria = []
 
     def __init__(self, nome, tipo, limite, descricao, id=None):
+        nome = nome.strip()
+        tipo = tipo.lower()
+        for cat in Categoria.lista_categoria:
+            if cat.nome.lower() == nome.lower() and cat.tipo == tipo:
+                raise ValueError(f"A categoria '{nome}' já existe para o tipo {tipo}.")
+        if tipo == "receita" and limite > 0:
+            raise ValueError("Categorias de receita não podem ter um limite de gastos.")
         if id is None:
             self.id = self.criar_proximo_id()
         else:

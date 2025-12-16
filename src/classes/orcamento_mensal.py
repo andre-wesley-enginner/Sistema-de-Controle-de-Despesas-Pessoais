@@ -2,8 +2,6 @@ import json
 from .alerta import Alerta
 from .despesa import Despesa
 from .receita import Receita
-from .lancamento import Lancamento
-from .relatorio import Relatorio
 from .categoria import Categoria
 
 CAMINHO_ORCAMENTO = "data/orcamentos.json"
@@ -29,9 +27,9 @@ class OrcamentoMensal:
     @mes.setter
     def mes(self, valor):
         if not isinstance(valor, int):
-            raise ValueError("Mês deve ser um número inteiro")
+            raise TypeError("Mês deve ser um número inteiro")
         if valor < 1 or valor > 12:
-            raise TypeError("Mês inválido")
+            raise ValueError("Mês inválido")
         else:
             self._mes = valor
 

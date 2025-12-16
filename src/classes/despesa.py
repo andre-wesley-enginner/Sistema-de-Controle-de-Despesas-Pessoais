@@ -17,7 +17,7 @@ class Despesa(Lancamento):
     
     @forma_pagamento.setter
     def forma_pagamento(self, valor):
-        metodos = ["dinheiro", "debito", "credito", "pix"]
+        metodos = ["dinheiro", "debito","débito", "credito","crédito", "pix"]
         if valor == None:
             raise ValueError("Método Inválido")
         elif not isinstance(valor, str):

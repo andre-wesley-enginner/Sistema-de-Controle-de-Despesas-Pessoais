@@ -1,11 +1,11 @@
 import sys
 from datetime import date
-from src.classes.categoria import Categoria
-from src.classes.receita import Receita
-from src.classes.despesa import Despesa
-from src.classes.relatorio import Relatorio
-from src.classes.alerta import Alerta
-from src.classes.orcamento_mensal import OrcamentoMensal
+from classes.categoria import Categoria
+from classes.receita import Receita
+from classes.despesa import Despesa
+from classes.relatorio import Relatorio, ExportarConsole, ExportarTXT
+from classes.alerta import Alerta
+from classes.orcamento_mensal import OrcamentoMensal
 
 def inicializar_sistema():
     """Carrega todos os dados dos arquivos JSON ao iniciar."""
@@ -68,7 +68,7 @@ def submenu_orcamentos_alertas():
 
 # --- EXECUÇÃO ---
 
-def main():
+def executar_cli():
     inicializar_sistema()
     while True:
         opcao = menu_principal()
@@ -77,15 +77,39 @@ def main():
         elif opcao == "3": submenu_orcamentos_alertas()
         elif opcao == "4":
             try:
-                m = int(input("Mês: ")); a = int(input("Ano: "))
+                m = int(input("Mês: "))
+                a = int(input("Ano: "))
                 rel = Relatorio.gerar_relatorio_mensal(m, a)
-                rel.exibir()
-            except Exception as e: print(f"Erro: {e}")
+                
+                print("\nComo deseja visualizar?")
+                print("1. Ver no Terminal")
+                print("2. Exportar para ficheiro .txt")
+                tipo = input("Escolha: ")
+                
+                if tipo == "2":
+                    rel.exibir(ExportarTXT())
+                else:
+                    rel.exibir(ExportarConsole()) # Usa a estratégia padrão
+                    
+            except Exception as e: 
+                print(f"Erro ao gerar relatório: {e}")
         elif opcao == "0":
-            print("Encerrando sistema. Até logo!")
+            print("\nSalvando dados...")
+            try:
+                # Chama os métodos de salvamento de cada classe
+                Categoria.salvar_categorias()
+                Receita.salvar_receitas()
+                Despesa.salvar_despesas()
+                Alerta.salvar_alertas()
+                OrcamentoMensal.salvar_orcamentos()
+                
+                print("Dados salvos com sucesso!")
+                print("Encerrando sistema. Até logo!")
+            except Exception as e:
+                print(f"Erro ao salvar dados: {e}")
             break
         else:
             print("Opção inválida!")
 
 if __name__ == "__main__":
-    main()
+    inicializar_sistema()

@@ -1,18 +1,17 @@
 import pytest
-import datetime
-from src.classes.categoria import Categoria
+from datetime import date
 from src.classes.despesa import Despesa
+from src.classes.categoria import Categoria
 
-def setup_function():
-    Categoria.lista_categoria.clear()
-    Despesa.lista_despesas.clear()
-
-def test_despesa_forma_pagamento():
-    cat = Categoria("Aluguel", "despesa", 1000, "Casa")
-    desp = Despesa(800, datetime.date.today(), cat, "Aluguel", "pix")
-    assert desp.forma_pagamento == "pix"
-
-def test_forma_pagamento_invalida():
-    cat = Categoria("Teste", "despesa", 100, "desc")
+def test_impedir_despesa_valor_invalido():
+    Categoria.lista_categoria = []
+    cat = Categoria("Lazer", "despesa", 100.0, "Teste")
     with pytest.raises(ValueError):
-        Despesa(50, datetime.date.today(), cat, "teste", "cheque")
+        # Adicionada forma_pagamento
+        Despesa(valor=0, data=date.today(), categoria=cat, descricao="Teste", forma_pagamento="Dinheiro")
+
+def test_str_despesa():
+    Categoria.lista_categoria = []
+    cat = Categoria("Saúde", "despesa", 500.0, "Farmácia")
+    despesa = Despesa(150.0, date(2025, 12, 16), cat, "Remédios", forma_pagamento="debito")
+    assert "150" in str(despesa)

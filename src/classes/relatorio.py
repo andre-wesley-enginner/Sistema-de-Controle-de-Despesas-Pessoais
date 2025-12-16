@@ -1,139 +1,95 @@
-import json
-import datetime
+from abc import ABC, abstractmethod
 
-from .receita import Receita
-from .despesa import Despesa
-from .categoria import Categoria
+# --- O PADRÃO STRATEGY ---
 
-CAMINHO_RELATORIO = "data/relatorios.json"
+# 1. A Interface (Classe Abstrata)
+class EstrategiaExportacao(ABC):
+    @abstractmethod
+    def exportar(self, relatorio):
+        pass
+
+# 2. Estratégia concreta: Exibição no Terminal (CLI)
+class ExportarConsole(EstrategiaExportacao):
+    def exportar(self, r):
+        print(f"\n" + "="*40)
+        print(f"{f'RELATÓRIO ANALÍTICO {r.mes}/{r.ano}':^40}")
+        print("="*40)
+        print(f"Receitas Totais:  R$ {r.total_receitas:>10.2f}")
+        print(f"Despesas Totais:  R$ {r.total_despesas:>10.2f}")
+        print(f"Saldo Final:      R$ {r.saldo:>10.2f}")
+        print("-" * 40)
+
+        if r.orcamento_anterior:
+            dif = r.saldo - r.orcamento_anterior.saldo
+            status = "MELHOR" if dif >= 0 else "PIOR"
+            print(f"Desempenho: R$ {abs(dif):.2f} {status} que o mês anterior.")
+
+        print("\nDISTRIBUIÇÃO POR CATEGORIA (Top Gastos):")
+        categorias_ordenadas = sorted(
+            r.gastos_por_categoria.items(), 
+            key=lambda x: x[1]['gasto'], 
+            reverse=True
+        )
+
+        for nome, dados in categorias_ordenadas:
+            percentual = (dados['gasto'] / r.total_despesas * 100) if r.total_despesas > 0 else 0
+            print(f"- {nome:<15}: R$ {dados['gasto']:>8.2f} ({percentual:>5.1f}%)")
+            if dados.get('limite', 0) > 0 and dados['gasto'] > dados['limite']:
+                print(f"  [ALERTA: LIMITE EXCEDIDO! Limite: R$ {dados['limite']:.2f}]")
+        
+        if len(categorias_ordenadas) > 0:
+            media = r.total_despesas / len(categorias_ordenadas)
+            print(f"\nMédia de gasto por categoria: R$ {media:.2f}")
+        print("="*40)
+
+# 3. Estratégia concreta: Guardar em Ficheiro TXT
+class ExportarTXT(EstrategiaExportacao):
+    def exportar(self, r):
+        nome_arq = f"relatorio_{r.mes}_{r.ano}.txt"
+        with open(nome_arq, "w", encoding="utf-8") as f:
+            f.write(f"RELATÓRIO FINANCEIRO - {r.mes}/{r.ano}\n")
+            f.write("="*30 + "\n")
+            f.write(f"Receitas: R$ {r.total_receitas:.2f}\n")
+            f.write(f"Despesas: R$ {r.total_despesas:.2f}\n")
+            f.write(f"Saldo:    R$ {r.saldo:.2f}\n")
+        print(f"\n[SUCESSO] Relatório exportado para {nome_arq}")
+
+# --- A CLASSE CONTEXTO (RELATÓRIO) ---
 
 class Relatorio:
-
-    lista_relatorios = []
-
-    def __init__(self, mes, ano, total_receitas, total_despesas, saldo, total_por_categoria, id=None):
+    def __init__(self, mes, ano, total_despesas, total_receitas, saldo, gastos_por_categoria, orcamento_anterior=None):
         self.mes = mes
         self.ano = ano
-        self.total_receitas = total_receitas
         self.total_despesas = total_despesas
+        self.total_receitas = total_receitas
         self.saldo = saldo
-        self.total_por_categoria = total_por_categoria
-        self.id = id if id is not None else self.criar_proximo_id()
-
-        Relatorio.lista_relatorios.append(self)
-
-    # ============================================================
-    # ===============  MÉTODOS PRINCIPAIS DO RELATÓRIO  ==========
-    # ============================================================
+        self.gastos_por_categoria = gastos_por_categoria
+        self.orcamento_anterior = orcamento_anterior
 
     @classmethod
     def gerar_relatorio_mensal(cls, mes, ano):
-        """
-        Gera o relatório básico da Semana 3
-        """
+        from .orcamento_mensal import OrcamentoMensal
 
-        Categoria.carregar_categorias()
-        Receita.carregar_receitas()
-        Despesa.carregar_despesas()
-
-        # Filtrar receitas e despesas do mês
-        receitas_mes = [r for r in Receita.lista_receitas if r.data.month == mes and r.data.year == ano]
-        despesas_mes = [d for d in Despesa.lista_despesas if d.data.month == mes and d.data.year == ano]
-
-        total_receitas = sum(r.valor for r in receitas_mes)
-        total_despesas = sum(d.valor for d in despesas_mes)
-        saldo = total_receitas - total_despesas
-
-        # Total por categoria (despesas)
-        total_por_categoria = {}
-        for desp in despesas_mes:
-            nome = desp.categoria.nome
-            total_por_categoria[nome] = total_por_categoria.get(nome, 0) + desp.valor
-
-        # Criar relatório
-        rel = Relatorio(
-            mes=mes,
-            ano=ano,
-            total_receitas=total_receitas,
-            total_despesas=total_despesas,
-            saldo=saldo,
-            total_por_categoria=total_por_categoria,
+        OrcamentoMensal.carregar_orcamentos()
+        orcamento = OrcamentoMensal.gerar_orcamento(mes, ano)
+        
+        mes_ant = 12 if mes == 1 else mes - 1
+        ano_ant = ano - 1 if mes == 1 else ano
+        
+        orcamento_anterior = next(
+            (o for o in OrcamentoMensal.lista_orcamentos if o.mes == mes_ant and o.ano == ano_ant), 
+            None
         )
 
-        cls.salvar_relatorios()
-        return rel
+        return cls(mes, ano, orcamento.total_despesas, orcamento.total_receitas, 
+                   orcamento.saldo, orcamento.orcamento_por_categoria, orcamento_anterior)
 
-    # ============================================================
-    # ========================= JSON =============================
-    # ============================================================
+    def exibir(self, estrategia: EstrategiaExportacao = None):
+        if estrategia is None:
+            estrategia = ExportarConsole()
+        estrategia.exportar(self)
 
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "mes": self.mes,
-            "ano": self.ano,
-            "total_receitas": self.total_receitas,
-            "total_despesas": self.total_despesas,
-            "saldo": self.saldo,
-            "total_por_categoria": self.total_por_categoria
-        }
-
-    @classmethod
-    def salvar_relatorios(cls):
-        with open(CAMINHO_RELATORIO, "w", encoding="utf-8") as arq:
-            json.dump([r.to_dict() for r in cls.lista_relatorios],
-                      arq, indent=4, ensure_ascii=False)
-
-    @classmethod
-    def carregar_relatorios(cls):
-        cls.lista_relatorios.clear()
-        try:
-            with open(CAMINHO_RELATORIO, "r", encoding="utf-8") as arq:
-                dados = json.load(arq)
-        except (FileNotFoundError, json.JSONDecodeError):
-            return []
-
-        for item in dados:
-            Relatorio(
-                mes=item["mes"],
-                ano=item["ano"],
-                total_receitas=item["total_receitas"],
-                total_despesas=item["total_despesas"],
-                saldo=item["saldo"],
-                total_por_categoria=item["total_por_categoria"],
-                id=item["id"],
-            )
-        return cls.lista_relatorios
-
-    # ============================================================
-    # ========================= ID ===============================
-    # ============================================================
-
-    @classmethod
-    def criar_proximo_id(cls):
-        try:
-            with open(CAMINHO_RELATORIO, "r", encoding="utf-8") as arq:
-                dados = json.load(arq)
-        except (FileNotFoundError, json.JSONDecodeError):
-            return 1
-
-        if not dados:
-            return 1
-
-        maior = max(item["id"] for item in dados)
-        return maior + 1
-
-    # ============================================================
-    # =================== IMPRESSÃO FORMATADA =====================
-    # ============================================================
-
-    def exibir(self):
-        print("\n===== RELATÓRIO MENSAL =====")
-        print(f"Mês/Ano: {self.mes}/{self.ano}")
-        print(f"Total Receitas: R$ {self.total_receitas:.2f}")
-        print(f"Total Despesas: R$ {self.total_despesas:.2f}")
-        print(f"Saldo: R$ {self.saldo:.2f}")
-        print("\n--- Total por Categoria ---")
-        for cat, total in self.total_por_categoria.items():
-            print(f"{cat}: R$ {total:.2f}")
-        print("============================\n")
+    @staticmethod
+    def calcular_percentual(gasto, limite):
+        if limite <= 0: return 0
+        return (gasto / limite) * 100

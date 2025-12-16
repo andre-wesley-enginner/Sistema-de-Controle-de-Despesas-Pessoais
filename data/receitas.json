@@ -1,16 +1,1 @@
-[
-    {
-        "id": 1,
-        "valor": 1000.0,
-        "data": "2007-12-12",
-        "descricao": "oi2",
-        "categoria": {
-            "nome": "Teste3",
-            "tipo": "receita",
-            "limite": null,
-            "descricao": "oi2",
-            "id": 3
-        },
-        "forma_recebimento": "dinheiro"
-    }
-]
+[]

@@ -1,19 +1,21 @@
 import pytest
-import datetime
+from datetime import date
+from src.classes.despesa import Despesa
 from src.classes.categoria import Categoria
 from src.classes.lancamento import Lancamento
 
-def setup_function():
-    Categoria.lista_categoria.clear()
-    Lancamento.lista_lancamento.clear()
+def test_validacao_tipo_data():
+    """Garante que a data deve ser fornecida em formato date[cite: 53]."""
+    cat = Categoria("Outros", "DESPESA", 10.0)
+    with pytest.raises(TypeError):
+        Despesa(10.0, "2025-12-16", cat, "Erro de tipo")
 
-def test_criar_lancamento():
-    cat = Categoria("Transporte", "despesa", 200, "Ônibus")
-    lanc = Lancamento(50, datetime.date(2024, 5, 10), cat, "Passagem")
-    assert lanc.valor == 50
-    assert lanc.categoria == cat
-
-def test_valor_invalido():
-    cat = Categoria("Teste", "despesa", 100, "desc")
-    with pytest.raises(ValueError):
-        Lancamento(-10, datetime.date.today(), cat, "erro")
+def test_heranca_lancamento():
+    """Verifica se uma Despesa herda corretamente os atributos de Lancamento[cite: 46, 47]."""
+    cat = Categoria("Educação", "DESPESA", 1000.0)
+    data_hoje = date.today()
+    desp = Despesa(300.0, data_hoje, cat, "Mensalidade")
+    
+    assert isinstance(desp, Lancamento)
+    assert desp.valor == 300.0
+    assert desp.data == data_hoje

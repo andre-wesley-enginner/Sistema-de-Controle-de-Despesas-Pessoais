@@ -1,16 +1,1 @@
-[
-    {
-        "id": 1,
-        "valor": 10000.0,
-        "data": "2007-12-13",
-        "descricao": "Comida",
-        "categoria": {
-            "nome": "Teste",
-            "tipo": "despesa",
-            "limite": 1000.0,
-            "descricao": "oi",
-            "id": 1
-        },
-        "forma_pagamento": "pix"
-    }
-]
+[]
