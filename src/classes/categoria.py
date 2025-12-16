@@ -11,7 +11,7 @@ class Categoria:
         for cat in Categoria.lista_categoria:
             if cat.nome.lower() == nome.lower() and cat.tipo == tipo:
                 raise ValueError(f"A categoria '{nome}' já existe para o tipo {tipo}.")
-        if tipo == "receita" and limite > 0:
+        if tipo == "receita" and (limite is not None and limite > 0):
             raise ValueError("Categorias de receita não podem ter um limite de gastos.")
         if id is None:
             self.id = self.criar_proximo_id()
@@ -60,7 +60,7 @@ class Categoria:
     def limite(self, valor):
 
         if self.tipo == "receita":
-            self._limite = None
+            self._limite = 0.0
             return
 
         if valor is None:
